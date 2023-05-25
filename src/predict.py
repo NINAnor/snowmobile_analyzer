@@ -38,7 +38,11 @@ def predict(testLoader, model, device, threshold=0.95):
     for array in testLoader:
 
         # Compute confidence for the DL model
-        tensor = torch.tensor(array)
+        if device == "cpu":
+            tensor = torch.tensor(array)
+        else:
+            tensor = array
+
         tensor = tensor.to(device)
         output = model(tensor)
         output = np.exp(output.cpu().detach().numpy())
@@ -74,7 +78,7 @@ def get_outname(input, out_path):
 
     return file_path
 
-def write_results(prob_audioclip_array, hr_array, outname):
+def write_results(prob_audioclip_array, hr_array, outname, min_hr, min_conf):
 
     # Store the array result in a CSV friendly format
     rows_for_csv = []
@@ -90,7 +94,7 @@ def write_results(prob_audioclip_array, hr_array, outname):
         hr = np.array(item_hr)
 
         # If the label is not "soundscape" then write the row:
-        if label != 0:
+        if label != 0 and hr > min_hr and max_value > min_conf:
             item_properties = [idx_begin, idx_end, label, max_value, hr]
             rows_for_csv.append(item_properties)
 
@@ -107,7 +111,7 @@ def write_results(prob_audioclip_array, hr_array, outname):
 
 
 def analyzeFile(
-    file_path, out_path, model, device, batch_size=1, num_workers=1
+    file_path, out_path, model, device, num_workers, min_hr, min_conf, batch_size=1
 ):
     # Start time
     start_time = datetime.datetime.now()
@@ -125,7 +129,7 @@ def analyzeFile(
         )
 
         pred_audioclip_array, pred_hr_array = predict(predLoader, model, device)
-        write_results(pred_audioclip_array, pred_hr_array, outname)
+        write_results(pred_audioclip_array, pred_hr_array, outname, min_hr, min_conf)
 
         # Give the tim it took to analyze file
         delta_time = (datetime.datetime.now() - start_time).total_seconds()
@@ -154,14 +158,29 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "--num_worker",
+        "--num_workers",
         help="Number of workers for reading in audiofiles",
         default=1,
         required=False,
         type=int,
     )
 
+    parser.add_argument(
+        "--min_hr",
+        help="Minimum value for harmonic ratio to take detection in",
+        default=0.1,
+        required=False,
+        type=int,
+    )
 
+    parser.add_argument(
+        "--min_conf",
+        help="Minimum value for model confidence to take detection in",
+        default=0.95,
+        required=False,
+        type=int,
+    )
+    
     cli_args = parser.parse_args()
 
     # Initiate model
@@ -179,9 +198,9 @@ if __name__ == "__main__":
             model,
             device=device,
             batch_size=1,
-            num_workers=1,
+            num_workers=cli_args.num_workers,
+            min_hr=cli_args.min_hr,
+            min_conf=cli_args.min_conf
         )
     except:
         print("File {} failed to be analyzed".format(cli_args.input))
-
-    # docker run --rm -v $PWD:/app --gpus all snowmobile poetry run python src/predict.py --input example/example_audio.mp3 --output example/analysed_example_audio.csv
