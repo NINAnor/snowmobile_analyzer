@@ -1,0 +1,6 @@
+# Ignore directory containing the R scripts used for the paper
+singing_in_noise∕
+
+# Ignore git and cache folders
+.git
+.cache
