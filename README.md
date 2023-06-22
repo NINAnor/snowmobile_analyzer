@@ -16,11 +16,9 @@ cd ../
 
 ### Use with Docker (recommanded)
 
-Create the docker image:
+Pull the Docker image:
 
-```bash
-docker build -t snowmobile -f Dockerfile .
-```
+
 
 Run the detector:
 

@@ -565,6 +565,7 @@ class _ESResNet(ResNetWithAttention):
             normalized=self.normalized,
             onesided=True
         )
+        
 
         if not self.onesided:
             spec = torch.cat((torch.flip(spec, dims=(-3,)), spec), dim=-3)
@@ -612,7 +613,6 @@ class _ESResNet(ResNetWithAttention):
             x.shape[0], -1, self.conv1.in_channels, *pow_spec_split_ch.shape[-2:]
         )
         x_db = torch.log10(pow_spec_split_ch).mul(10.0)
-
         return x_db
 
     def _forward_features(self, x_db: torch.Tensor) -> List[torch.Tensor]:
