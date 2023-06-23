@@ -22,6 +22,12 @@ Run the program:
 
 ### Use without Docker - assume Linux installation!
 
+Install `poetry` (the package manager we use) if it is not already installed.
+
+```bash
+pip install poetry
+```
+
 Copy the github repository and get the model from [Zenodo](https://zenodo.org/record/7969521).
 
 ```bash
@@ -48,7 +54,7 @@ poetry run python src/predict.py --input example/example_audio.mp3
 
 ## Acknowlegment and contact
 
-For bug reports please use the [issues section](https://github.com/NINAnor/rare_species_detections/issues).
+For bug reports please use the [issues section](https://github.com/NINAnor/snowmobile_analyzer/issues).
 
 For other inquiries please contact [Benjamin Cretois](mailto:benjamin.cretois@nina.no) or [Femke Gelderblom](mailto:femke.gelderblom@sintef.no) 
 
