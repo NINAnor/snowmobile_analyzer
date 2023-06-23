@@ -111,13 +111,21 @@ def write_results(prob_audioclip_array, hr_array, outname, min_hr, min_conf):
 
 
 def analyzeFile(
-    file_path, out_path, model, device, num_workers, min_hr, min_conf, batch_size=1
+    file_path, model, device, num_workers, min_hr, min_conf, batch_size=1
 ):
     # Start time
     start_time = datetime.datetime.now()
 
+    # Create a result folder
+    input_dir = os.path.dirname(file_path)
+    result_folder = os.path.join(input_dir, "SNOWMOBILE_RESULTS")
+
+    if not os.path.exists(result_folder):
+        os.makedirs(result_folder)
+
     # Check if the output already exists
-    outname = out_path
+    outname = file_path.split("/")[-1].split(".")[0] + "_ANALYZED.csv"
+    outpath = os.path.join(result_folder, outname)
 
     if os.path.exists(outname):
         print("File {} already exists".format(outname))
@@ -129,7 +137,7 @@ def analyzeFile(
         )
 
         pred_audioclip_array, pred_hr_array = predict(predLoader, model, device)
-        write_results(pred_audioclip_array, pred_hr_array, outname, min_hr, min_conf)
+        write_results(pred_audioclip_array, pred_hr_array, outpath, min_hr, min_conf)
 
         # Give the tim it took to analyze file
         delta_time = (datetime.datetime.now() - start_time).total_seconds()
@@ -146,14 +154,6 @@ if __name__ == "__main__":
         "--input",
         help="Path to the file to analyze",
         required=True,
-        type=str,
-    )
-
-    parser.add_argument(
-        "--output",
-        help="Result file path",
-        default="config_inference.yaml",
-        required=False,
         type=str,
     )
 
@@ -194,7 +194,6 @@ if __name__ == "__main__":
     try:
         analyzeFile(
             cli_args.input,
-            cli_args.output,
             model,
             device=device,
             batch_size=1,
