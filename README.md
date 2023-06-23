@@ -17,6 +17,8 @@ docker pull ghcr.io/ninanor/snowmobile_analyzer:main
 Run the program:
 
 ```bash
+git clone https://github.com/NINAnor/snowmobile_analyzer.git
+cd snowmobile_analyzer
 ./analyze.sh ~/Code/snowmobile-analyzer/example/example_audio.mp3
 ```
 
