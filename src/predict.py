@@ -10,6 +10,12 @@ from torch.utils.data import DataLoader
 from utils.utils import AudioList
 from utils.audio_signal import AudioSignal
 
+import traceback
+import logging
+
+logging.basicConfig(filename='logs/logfile.log', level=logging.INFO,
+                    format='%(asctime)s - %(levelname)s - %(message)s')
+
 def initModel(model_path, device):
     model = torch.load(model_path)
     model.eval()
@@ -141,7 +147,9 @@ def analyzeFile(
 
         # Give the tim it took to analyze file
         delta_time = (datetime.datetime.now() - start_time).total_seconds()
-        print("Finished {} in {:.2f} seconds".format(file_path, delta_time), flush=True)
+        message = "Finished {} in {:.2f} seconds".format(file_path, delta_time)
+        print(message, flush=True)
+        logging.info(message)
 
 
 if __name__ == "__main__":
@@ -201,5 +209,7 @@ if __name__ == "__main__":
             min_hr=cli_args.min_hr,
             min_conf=cli_args.min_conf
         )
-    except:
-        print("File {} failed to be analyzed".format(cli_args.input))
+    except Exception as e:
+        print(f"File {cli_args.input} failed to be analyzed")
+        logging.error(f"File {cli_args.input} failed to be analyzed: {str(e)}")
+        logging.error(traceback.format_exc())

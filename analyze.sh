@@ -9,5 +9,11 @@ FILENAME=$(basename $INPUT)
 docker run \
     --rm \
     --gpus all \
+    -v ./logs:/app/logs \
     -v $FOLDER_TO_EXPOSE:/data \
-    ghcr.io/ninanor/snowmobile_analyzer:main --input /data/$FILENAME
+    snowmobile \
+    --input /data/$FILENAME
+
+
+
+# ghcr.io/ninanor/snowmobile_analyzer:main
