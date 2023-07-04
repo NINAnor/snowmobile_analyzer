@@ -1,6 +1,17 @@
-# Snowmobile analyser
+<h1 align="center">Snowmobile analyzer :snowflake: </h1>
+<h2 align="center">A model to detect whether snowmobiles are present in an acoustic dataset.</h2>
 
-This repository contains the necessary for running the snowmobile detector.
+![CC BY-NC-SA 4.0][license-badge]
+![Supported OS][os-badge]
+[![DOI](https://zenodo.org/badge/644880301.svg)](https://zenodo.org/badge/latestdoi/644880301)
+
+[license-badge]: https://badgen.net/badge/License/MIT/red
+[os-badge]: https://badgen.net/badge/OS/Linux/blue
+
+# Introduction
+
+This repository contains the necessary for running the snowmobile detector on audio dataset.
+
 
 ## Use of the repository
 
@@ -22,7 +33,7 @@ cd snowmobile_analyzer
 ./analyze.sh ./example/example_audio.mp3
 ```
 
-### Use without Docker - assume Linux installation!
+### Use without Docker
 
 Install `poetry` (the package manager we use) if it is not already installed.
 
