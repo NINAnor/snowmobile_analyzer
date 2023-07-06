@@ -193,7 +193,7 @@ if __name__ == "__main__":
 
     # Initiate model
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model_path = "/app/audioclip/assets/snowmobile_model.pth"
+    model_path = "/app/assets/snowmobile_model.pth"
 
     model = initModel(model_path=model_path, device=device)
 
