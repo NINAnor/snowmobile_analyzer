@@ -12,8 +12,9 @@ exec docker run \
     --gpus all \
     -v ./logs:/app/logs \
     -v "$FOLDER_TO_EXPOSE":/data \
-    ghcr.io/ninanor/snowmobile_analyzer:main \
+    snowmobile \
     --input /data/"$FILENAME"
 
+#ghcr.io/ninanor/snowmobile_analyzer:main 
 
 

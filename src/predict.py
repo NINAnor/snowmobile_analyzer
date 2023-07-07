@@ -13,6 +13,12 @@ from utils.audio_signal import AudioSignal
 import traceback
 import logging
 
+# Open the config file
+import yaml
+from yaml import FullLoader
+with open("./CONFIG.yaml") as f:
+    cfg = yaml.load(f, Loader=FullLoader)
+
 logging.basicConfig(filename='logs/logfile.log', level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -193,7 +199,7 @@ if __name__ == "__main__":
 
     # Initiate model
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model_path = "/app/assets/snowmobile_model.pth"
+    model_path = cfg["path_snowmobile_model"]
 
     model = initModel(model_path=model_path, device=device)
 
