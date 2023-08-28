@@ -19,19 +19,21 @@ Below are the intructions on installing and using the snowmobile detector with b
 
 ### Use with Docker (recommanded)
 
-Pull the Docker image:
+Create the Docker image image:
 
 ```
-docker pull ghcr.io/ninanor/snowmobile_analyzer:main
+git clone https://github.com/NINAnor/snowmobile_analyzer.git
+cd snowmobile_analyzer
+docker build -t snowmobile -f Dockerfile .
 ```
 
 Run the program:
 
 ```bash
-git clone https://github.com/NINAnor/snowmobile_analyzer.git
-cd snowmobile_analyzer
-./analyze.sh ./example/example_audio.mp3
+./analyze.sh ./example/example_audio.mp3 
 ```
+
+Note that you can change `./example/example_audio.mp3` to the path of your own file.
 
 ### Use without Docker
 
@@ -65,6 +67,21 @@ Run the script:
 poetry run python src/predict.py --input example/example_audio.mp3
 ```
 
+### Output
+
+The program creates a folder SNOWMOBILE_RESULTS containing a `.csv` file with the following columns:
+
+| start_detection | end_detection | label | confidence | hr |
+| 0 | 3 | 1 | 0.97691464 | 0.19687336119166438 |
+| 3 | 6 | 1 | 0.9611957 | 0.16774687365839228 |
+
+- `start_detection` and `end_detection` are in **seconds**
+- `label` is always equal to 1 (i.e. snowmobile detected)
+- `confidence` is the model confidence
+- `hr` is the harmonic ratio value
+
+By default the program select detections for which `confidence` > 0.95 and `hr` > 0.1.
+ 
 ## Acknowlegment and contact
 
 For bug reports please use the [issues section](https://github.com/NINAnor/snowmobile_analyzer/issues).
@@ -74,4 +91,4 @@ For other inquiries please contact [Benjamin Cretois](mailto:benjamin.cretois@ni
 
 ## Cite this work
 
-Manuscript for this work soon to be available.
+Cretois, B., Bick, I. A., Balantic, C., Gelderblom, F., Pavon-Jordan, D., Wiel, J., ... & Reinen, T. A. (2023). Snowmobile noise alters bird vocalization patterns during winter and pre-breeding season. bioRxiv, 2023-07.
