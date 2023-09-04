@@ -23,10 +23,9 @@ logging.basicConfig(filename='logs/logfile.log', level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
 def initModel(model_path, device):
-    model = torch.load(model_path)
+    model = torch.load(model_path, map_location=torch.device(device))
     model.eval()
-
-    return model.to(device)
+    return model
 
 def compute_hr(array):
 
