@@ -72,6 +72,7 @@ poetry run python src/predict.py --input example/example_audio.mp3
 The program creates a folder SNOWMOBILE_RESULTS containing a `.csv` file with the following columns:
 
 | start_detection | end_detection | label | confidence | hr |
+|-----------------|---------------|-------|------------|----|
 | 0 | 3 | 1 | 0.97691464 | 0.19687336119166438 |
 | 3 | 6 | 1 | 0.9611957 | 0.16774687365839228 |
 
