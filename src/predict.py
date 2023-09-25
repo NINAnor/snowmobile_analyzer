@@ -41,7 +41,7 @@ def compute_hr(array):
 
     return hr
 
-def predict(testLoader, model, device, threshold=0.95):
+def predict(testLoader, model, device, threshold=0.99):
 
     proba_list = []
     hr_list = []
@@ -112,13 +112,20 @@ def write_results(prob_audioclip_array, hr_array, outname, min_hr, min_conf):
         # Update the start time of the detection
         idx_begin = idx_end
 
-    with open(outname, "w") as file:
+        # Write only if there are some detections respecting our conditions
+        if len(rows_for_csv) > 0:
+            with open(outname, "w") as file:
 
-        writer = csv.writer(file)
-        header = ["start_detection", "end_detection", "label", "confidence", "hr"]
+                writer = csv.writer(file)
+                header = ["start_detection", "end_detection", "label", "confidence", "hr"]
 
-        writer.writerow(header)
-        writer.writerows(rows_for_csv)
+                writer.writerow(header)
+                writer.writerows(rows_for_csv)
+        else:
+            file_analyzed = os.path.basename(outname)
+            message = f"No detection has been made for {file_analyzed}"
+            print(message)
+            logging.info(message)
 
 
 def analyzeFile(
@@ -148,6 +155,7 @@ def analyzeFile(
         )
 
         pred_audioclip_array, pred_hr_array = predict(predLoader, model, device)
+
         write_results(pred_audioclip_array, pred_hr_array, outpath, min_hr, min_conf)
 
         # Give the tim it took to analyze file
@@ -189,7 +197,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--min_conf",
         help="Minimum value for model confidence to take detection in",
-        default=0.95,
+        default=0.99,
         required=False,
         type=int,
     )

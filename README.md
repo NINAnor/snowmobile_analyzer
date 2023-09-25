@@ -27,10 +27,22 @@ cd snowmobile_analyzer
 docker build -t snowmobile -f Dockerfile .
 ```
 
-Run the program:
+Run the program using the `analyze.sh` script which is a wrapper around the Docker command
 
 ```bash
 ./analyze.sh ./example/example_audio.mp3 
+```
+
+Note that if you want to have more control over the arguments you can use Docker:
+
+```bash
+docker run \
+    --rm \
+    --gpus all \
+    -v ./logs:/app/logs \ # Important to write the log files
+    -v "$FOLDER_TO_EXPOSE":/data \
+    snowmobile \
+    --input /data/"$FILENAME"
 ```
 
 Note that you can change `./example/example_audio.mp3` to the path of your own file.
