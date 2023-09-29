@@ -25,7 +25,8 @@ RUN cd ../
 COPY . ./
 RUN poetry config virtualenvs.create false
 RUN poetry install --no-root
-
+RUN poetry add distlib
+RUN poetry add Flask
 
 
 ENV PYTHONPATH "${PYTHONPATH}:/app:/app/audioclip:/app:/app/src"

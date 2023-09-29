@@ -97,23 +97,6 @@ def process_audio_endpoint():
 
 
 if __name__ == "__main__":
-
-
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument(
-        "--input",
-        help="Path to the file to analyze",
-        required=True,
-        type=str,
-    )
-
-    cli_args = parser.parse_args()
-
-    on_process_audio("my-audio-id", {
-        "location": {
-            "latitude": 0,
-            "longitude": 0
-        }
-    }, cli_args.input)
+    
+    app.run(host='0.0.0.0', port=8080)
 

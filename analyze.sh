@@ -15,6 +15,4 @@ exec docker run \
     snowmobile \
     --input /data/"$FILENAME"
 
-#ghcr.io/ninanor/snowmobile_analyzer:main 
-
 
