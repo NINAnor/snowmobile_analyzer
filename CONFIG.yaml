@@ -3,6 +3,6 @@
 ######################################
 
 # List of paths to initialise the model
-path_tokenizer_file: "./assets/bpe_simple_vocab_16e6.txt.gz" 
-path_audioclip: './assets/AudioCLIP-Full-Training.pt' 
-path_snowmobile_model: "./assets/snowmobile_model.pth"
+path_tokenizer_file: "/app/audioclip/assets/bpe_simple_vocab_16e6.txt.gz" 
+path_audioclip: '/app/audioclip/assets/AudioCLIP-Full-Training.pt' 
+path_snowmobile_model: "/app/audioclip/assets/snowmobile_model.pth"
