@@ -1,4 +1,3 @@
-
 #!/usr/env/bin python3
 
 from flask import Flask, request, jsonify
@@ -54,7 +53,6 @@ def send_email(subject, body):
         logging.info("Email sent successfully!")
     except Exception as e:
         logging.error(f"Error sending email: {e}")
-
 
 
 def analyseAudioFile(
@@ -138,8 +136,8 @@ def process_audio_endpoint():
     
     detection_count = on_process_audio(audio_id, audio_rec, audio_file_path)
 
-    #if detection_count > 0:
-    send_email("Snowmobile Detection Alert", f"{detection_count} snowmobile detections were made in the audio file!")
+    if detection_count > 0:
+        send_email("Snowmobile Detection Alert", f"{detection_count} snowmobile detections were made in the audio file!")
     
     return jsonify({"message": "Audio processing completed!"})
 
