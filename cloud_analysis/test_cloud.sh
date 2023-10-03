@@ -7,4 +7,3 @@ curl -X POST \
      https://model-4uhtnq5xla-lz.a.run.app/process-audio
 
 
-# /home/benjamin.cretois/data/snowmobile/example_audio.mp3

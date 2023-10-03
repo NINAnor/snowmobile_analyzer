@@ -4,6 +4,28 @@
 
 - If lost, there is a button `console` on the upper right corner that brings us back to the projects
 
+## Create service account with access to the Google Cloud bucket
+
+First create a new service account:
+
+```
+IAM and Admin -> Service Account -> Create Service Account
+```
+
+Then you need to change the permission for **Storage Object Viewer** so that the service account can access the cloud bucket.
+
+Then create a **Key** that will act as the `GOOGLE_APPLICATION_CREDENTIALS`, an environment variable that authentificate a user for accessing the Google Cloud Bucket (see `main.py/fetch_audio_data`).
+
+Copy/Paste the `.json` file created from the key and copy it in a file called `g_application_credentials.json`. This will be access in the `main.py/fetch_audio_data`:
+
+```
+    credentials = service_account.Credentials.from_service_account_file(
+        '/app/cloud_analysis/g_application_credentials.json'
+)
+
+    storage_client = storage.Client(credentials=credentials)
+```
+
 ## Create the Docker image for Cloud analysis
 
 The Docker image used for the cloud analysis is slightly different:
