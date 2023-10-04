@@ -89,7 +89,7 @@ def fetch_audio_data(bucket_name, blob_name):
     import google.auth
 
     credentials = service_account.Credentials.from_service_account_file(
-        '/app/cloud_analysis/g_application_credentials.json'
+        '/app/cloud_analysis/key-file.json'
 )
 
     storage_client = storage.Client(credentials=credentials)

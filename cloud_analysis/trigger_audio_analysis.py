@@ -10,7 +10,7 @@ def trigger_audio_analysis(data, context):
     bucket_name = data['bucket']
     
     # URL of your Cloud Run service
-    cloud_run_url = "https://model-4uhtnq5xla-lz.a.run.app/process-audio-gcs"
+    cloud_run_url = "https://model-4uhtnq5xla-lz.a.run.app/process-audio"
     
     # ID Token for authentication
     id_token = os.environ.get("ID_TOKEN")
