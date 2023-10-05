@@ -110,7 +110,7 @@ def fetch_audio_data(bucket_name, blob_name):
 
 
 def analyseAudioFile(
-        audio_file_object, batch_size=1, num_workers=4, min_hr = 0.1, min_conf = 0.99
+        audio_file_object, min_hr, min_conf, batch_size=1, num_workers=2,
 ):
 
     # Initiate model
@@ -148,14 +148,14 @@ def analyseAudioFile(
 
     return results
 
-def on_process_audio(audio_id: str, audio_rec: dict, bucket_name: str, blob_name: str):
+def on_process_audio(audio_id: str, audio_rec: dict, bucket_name: str, blob_name: str, hr: float, conf:float):
     
     print(f"PROCESSING audioId={audio_id}")
     location = audio_rec["location"]
 
     # A call out to your code here. Optionally we can pass on the recorder coordinates 
     audio_file_object = fetch_audio_data(bucket_name, blob_name)
-    results = analyseAudioFile(audio_file_object)
+    results = analyseAudioFile(audio_file_object, hr, conf)
     # The object results is a list containing detections in the form:
     # [start, end, confidence, harmonic ratio]
 
@@ -165,7 +165,7 @@ def on_process_audio(audio_id: str, audio_rec: dict, bucket_name: str, blob_name
     detections = []
     for r in results: 
         start, end, confidence, harmonic_ratio = r
-        if harmonic_ratio > 0.1 and confidence > 0.99:
+        if harmonic_ratio > hr and confidence > conf:
             count += 1
 
         # create the detections dataset
@@ -189,8 +189,10 @@ def process_audio_endpoint():
     blob_name = data['blob_name']
     audio_id = data['audio_id']
     audio_rec = data['audio_rec']
+    hr = data['hr']
+    conf = data['conf']
     
-    results = on_process_audio(audio_id, audio_rec, bucket_name, blob_name)
+    results = on_process_audio(audio_id, audio_rec, bucket_name, blob_name, hr, conf)
 
     if results > 0:
         send_email("Snowmobile Detection Alert", f"{results} snowmobile detections were made in the audio file!")

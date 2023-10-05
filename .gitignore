@@ -2,4 +2,5 @@ audioclip/assets/*
 **/*/__pycache__/*
 singing_in_noise/Figures_MS/*
 cloud_analysis/gmail_logs.env
+cloud_analysis/key-file.json
 logs/logfile.log

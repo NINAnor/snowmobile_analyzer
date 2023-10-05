@@ -56,6 +56,8 @@ def fetch_service_account_key(bucket_name, blob_name):
 def trigger_audio_analysis(data, context):
     file_name = data['name']
     bucket_name = data['bucket']
+    harmonic_ratio = 0.05
+    confidence = 0.80
     
     # URL of your Cloud Run service
     cloud_run_url = "https://model-4uhtnq5xla-lz.a.run.app/process-audio"
@@ -65,7 +67,9 @@ def trigger_audio_analysis(data, context):
         "bucket_name": bucket_name,
         "blob_name": file_name,
         "audio_id": "example-audio-id",
-        "audio_rec": {"location": {"latitude": 0, "longitude": 0}}
+        "audio_rec": {"location": {"latitude": 0, "longitude": 0}},
+        "hr": harmonic_ratio,
+        "conf": confidence
     }
     
     # Specify the GCS bucket and blob name of the service account key file

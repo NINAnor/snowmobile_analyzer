@@ -1,0 +1,13 @@
+{
+    "type": "service_account",
+    "project_id": "snoskuter-akustikk",
+    "private_key_id": "74c1e4bcd4b00da4dcaf848c31b7f0e77f077163",
+    "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCSSaUWwH1vue/s\nw6fz1RVq+CIP6RSKwBLCBO3B4un6crj6BCZpE8uOIulMlkQbhCoesVWUS+QWJJmU\nvJqIypGJXgjOlsG3AfezGbk39xbQI/g5ZN1f3QPWDvZkF7raMphu7aiDHsGesNbI\nvT1ASWvUpKD8W54XvocIekGlCL3fDSuvtSFL2Uz/MoLk6P9hl9qCQMY89sEooXY5\ng/h008Mam+/SNfPukGAmkjtUpf9w49tWdj5b1QC4e9JiDwE7PAmckKynYyzUrfVr\nDsphjk2jDFBPRY9MlFiLZl0I9QaU/4dHOa8hSOZ7lXFie7MUgRPrbfJWY/Fcm+2k\n3bq+qAqxAgMBAAECggEAB8pIMlf51hNOxYr9zKxSQaoJFlPRNjpYRWDB0Itm7mFh\nnF7QNNRLCLyvM9bktZpqK8xBxG3uLYexbgxFJnezHF+XlHjOxBIkwLLj/Cj6XAcu\nVtAaQdqhM6sET/w7hRcgqveY+7KNmQfNyE7bjiraxS4nLIkseBM7WaY5DLLUeaZD\nRAmZi5KHv9hnINL3jVwMQTMXDwNCI4gvvTtWjfiWF5870cGaDHFcLiCuaWYrH1sc\nyuc5BUFkOSJx+TYxoYk+Rd/aTfj/4EVzBGLeDMI40QfAuNBYSqYbHX9Uv8oTDlUI\n7UA8SqhOhtwjwGMZhC4CPLDspFhIFyuhtWeFNJjsAQKBgQDLohEAe+vQ1OvCqgZb\nh4RckCzQc++zFHGymFVfmMSfi7B3/tMalAyNzTiZmxTuqzT+fOrUj3KfLJZT+pQ+\nDmsqymS/CL6bh9f7vzNg7YU798rGtbYFZ82WzDg0adPpWC0rz+uoK5GSo8o19Mon\nRsWLvrcaMaoaQw/dbqfomYpP0QKBgQC36FCJeTg1Iecss53Oz/ubfQ44PCrpyOcy\n3+SG3ZbWFTRGUEZBgsFkW6JbmBNNGlCFRA0bISZFMZ+6SPPg+dhdyRERbbHIOKPa\nuok5p6fVuLYKEl4EnNyiFm/dR6IBewSVr9j9gVXUH8buz1Yn81LmmeyWU5qPZrv4\nqbk5RRak4QKBgByKBTn9JCqrfLNWovd3Abz7U9yPMxv1FI5EPUrdnUkDCeN3alzC\nPRQum+0jSAa/Jfk4xqytwhG+7P6uEtKzsJ9ZqE8Byb0Ah+u3e1rtTwv9iYTZ+L2/\nM5gb3RCzeEiu2/3U8SErogZcQD3Zpe9lQtB4FS9toHp3xaRyGsRFqJXRAoGBAJiS\nMQ579HeP8tuQ/+Cth02NyBg7QlbFh5kbSdnhR9u/p6iVvFNpCMwbgWx/k7OpmxeU\nR1M0gy1wZ9UB5OHGJQxZXMGawZ0b8EPr8SBVyNVz8gIVDs7A3AHUn2VyoiKcTkdo\npZpajDv5SO6iMBXgtev90ts77MP/NP6sv6+Vc53BAoGAUgLZ5dO7jOuMeF5aF93v\nd4EjNsxkWDh+1tznSc/zcZxB7BytVsb61HRDn/6HPwSGSvqz7RLKqtynZOhGUlLS\ndtw9TXUgwhMM/iKLUvZQKghm0CfnnsGjEkNowAHTnS7mRBNeClnpYFWxWkE/Za6k\nFnQZmUYKgliaLaVJBXc3W8E=\n-----END PRIVATE KEY-----\n",
+    "client_email": "snoskuter-akustikk@appspot.gserviceaccount.com",
+    "client_id": "104912621642971586511",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/snoskuter-akustikk%40appspot.gserviceaccount.com",
+    "universe_domain": "googleapis.com"
+}

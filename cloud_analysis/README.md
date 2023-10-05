@@ -123,9 +123,10 @@ docker push gcr.io/snoskuter-akustikk/snowmobile_cloud:main
 gcloud run deploy \
     model \
     --image gcr.io/snoskuter-akustikk/snowmobile_cloud:main \
-    --memory 4Gi \
+    --memory 8Gi \
     --region europe-north1 \
-    --platform managed
+    --platform managed \
+    --cpus 4
 ```
 
 Be sure to allocate enough memory for the service to be able to process the files and run the model.
@@ -156,7 +157,7 @@ Because of the structure of the `main.py`, the `key-file.json` that has been cre
 Once this is done you can deploy the function using:
 
 ```bash
-gcloud functions deploy trigger_audio_analysis \ 
+gcloud functions deploy trigger_audio_analysis \
     --runtime python310 \
     --trigger-resource snoskuter-detector-test \
     --trigger-event google.storage.object.finalize \
