@@ -126,7 +126,7 @@ gcloud run deploy \
     --memory 8Gi \
     --region europe-north1 \
     --platform managed \
-    --cpus 4
+    --cpu 4
 ```
 
 Be sure to allocate enough memory for the service to be able to process the files and run the model.
@@ -178,3 +178,9 @@ Explanation of the command:
 `--entry-point trigger_audio_analysis`: Specifies that the function to execute is named trigger_audio_analysis within your source code.
 
 `--source .`: Specifies that the source code that should be deployed is in the current directory.
+
+## USEFUL POINTS
+
+- It is possible to create a **signed URL** which can be included in the output email and that allow the end user to download the file even though he / she does not have credentials to access the Google Cloud Bucket
+- In the `config.json` file of the audio recorder, add **project_id** as the location so that the folder created has the name of the location. When sending the email, it is then possible to infer **where** the detections have been made.
+

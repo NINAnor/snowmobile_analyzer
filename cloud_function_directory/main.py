@@ -56,8 +56,8 @@ def fetch_service_account_key(bucket_name, blob_name):
 def trigger_audio_analysis(data, context):
     file_name = data['name']
     bucket_name = data['bucket']
-    harmonic_ratio = 0.05
-    confidence = 0.80
+    harmonic_ratio = 0.1
+    confidence = 0.95
     
     # URL of your Cloud Run service
     cloud_run_url = "https://model-4uhtnq5xla-lz.a.run.app/process-audio"

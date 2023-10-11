@@ -20,6 +20,9 @@ from predict import initModel
 from utils.utils import AudioList
 
 from google.cloud import storage
+from google.oauth2 import service_account
+import datetime
+
 import io
 
 import logging
@@ -108,6 +111,38 @@ def fetch_audio_data(bucket_name, blob_name):
     
     return wav_file_object
 
+def generate_signed_url(bucket_name, blob_name, expiration_time=600):
+    """
+    Generates a signed URL for a GCS object.
+    
+    Parameters:
+        bucket_name (str): Name of the GCS bucket.
+        blob_name (str): Name of the blob (file) in the GCS bucket.
+        expiration_time (int): Time, in seconds, until the signed URL expires.
+
+    Returns:
+        str: A signed URL to download the object.
+    """
+    # Path to the service account key file
+    key_path = '/app/cloud_analysis/key-file.json'
+
+    # Initialize a GCS client
+    credentials = service_account.Credentials.from_service_account_file(key_path)
+    client = storage.Client(credentials=credentials)
+    
+    # Get the bucket and blob objects
+    bucket = client.get_bucket(bucket_name)
+    blob = bucket.blob(blob_name)
+    
+    # Generate the signed URL
+    url = blob.generate_signed_url(
+        version="v4",
+        expiration=datetime.timedelta(seconds=expiration_time),
+        method="GET"
+    )
+    
+    return url
+
 
 def analyseAudioFile(
         audio_file_object, min_hr, min_conf, batch_size=1, num_workers=2,
@@ -178,7 +213,7 @@ def on_process_audio(audio_id: str, audio_rec: dict, bucket_name: str, blob_name
             #u"analysisId": analysis_id,
             # Add any other information you want to record here
         })
-
+    
     return count
 
 
@@ -195,7 +230,17 @@ def process_audio_endpoint():
     results = on_process_audio(audio_id, audio_rec, bucket_name, blob_name, hr, conf)
 
     if results > 0:
-        send_email("Snowmobile Detection Alert", f"{results} snowmobile detections were made in the audio file!")
+        # Create a signed URL
+        download_url = generate_signed_url(bucket_name, blob_name)
+
+        # Extract folder name (location) from the blob name
+        location = blob_name.split("/")[0]
+
+        # Write and send the email
+        email_body = f"{results} snowmobile detections were made in the audio file!\n"
+        email_body += f"Detections come from: {location}\n"
+        email_body += f"Download the audio file here: {download_url}"
+        send_email("Snowmobile Detection Alert", email_body)
 
     return jsonify({"message": "Audio processing completed!"})
 
