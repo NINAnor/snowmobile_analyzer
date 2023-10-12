@@ -10,7 +10,9 @@
 
 # Introduction
 
-This repository contains the necessary for running the snowmobile detector on audio dataset.
+This repository is made to run the snowmobile detector on your audio files.
+
+Moreoever, in this repository we provide guidance on setting up a pipeline for real-time analysis of audio files on [Google Cloud](https://cloud.google.com/). For more information see the [README in the subfolder cloud_analysis](https://github.com/NINAnor/snowmobile_analyzer/blob/main/cloud_analysis/README.md).
 
 
 ## Use of the repository
