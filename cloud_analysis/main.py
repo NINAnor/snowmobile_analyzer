@@ -111,7 +111,7 @@ def fetch_audio_data(bucket_name, blob_name):
     
     return wav_file_object
 
-def generate_signed_url(bucket_name, blob_name, expiration_time=600):
+def generate_signed_url(bucket_name, blob_name, expiration_time=86400):
     """
     Generates a signed URL for a GCS object.
     
@@ -164,6 +164,10 @@ def analyseAudioFile(
     # List of results
     results = []
 
+    # List of model confidence and HR
+    conf_arr = []
+    hr_arr = []
+
     for item_audioclip, item_hr in zip(prob_audioclip_array, hr_array):
 
         # Get the properties of the detection (start, end, label, confidence and harmonic ratio)
@@ -173,6 +177,10 @@ def analyseAudioFile(
         confidence = conf.max()
         hr = np.array(item_hr)
 
+        # Append the conf and hr of each segment
+        conf_arr.append(confidence)
+        hr_arr.append(hr)
+
         # If the label is not "soundscape" then write the row:
         if label != 0 and hr > min_hr and confidence > min_conf:
             item_properties = [idx_begin, idx_end, confidence, hr]
@@ -181,7 +189,10 @@ def analyseAudioFile(
         # Update the start time of the detection
         idx_begin = idx_end
 
-    return results
+    # Get the max confidence and hr for the file analyzed
+    maxes = [max(conf_arr), max(hr_arr)]
+
+    return results, maxes
 
 def on_process_audio(audio_id: str, audio_rec: dict, bucket_name: str, blob_name: str, hr: float, conf:float):
     
@@ -190,7 +201,7 @@ def on_process_audio(audio_id: str, audio_rec: dict, bucket_name: str, blob_name
 
     # A call out to your code here. Optionally we can pass on the recorder coordinates 
     audio_file_object = fetch_audio_data(bucket_name, blob_name)
-    results = analyseAudioFile(audio_file_object, hr, conf)
+    results, maxes = analyseAudioFile(audio_file_object, hr, conf)
     # The object results is a list containing detections in the form:
     # [start, end, confidence, harmonic ratio]
 
@@ -198,8 +209,10 @@ def on_process_audio(audio_id: str, audio_rec: dict, bucket_name: str, blob_name
     # Each detection should have a start and end time which is used to create an audio clip later. 
     count = 0
     detections = []
+
     for r in results: 
         start, end, confidence, harmonic_ratio = r
+
         if harmonic_ratio > hr and confidence > conf:
             count += 1
 
@@ -214,7 +227,7 @@ def on_process_audio(audio_id: str, audio_rec: dict, bucket_name: str, blob_name
             # Add any other information you want to record here
         })
     
-    return count
+    return count, maxes
 
 
 @app.route('/process-audio', methods=['POST'])
@@ -227,9 +240,10 @@ def process_audio_endpoint():
     hr = data['hr']
     conf = data['conf']
     
-    results = on_process_audio(audio_id, audio_rec, bucket_name, blob_name, hr, conf)
+    results, maxes = on_process_audio(audio_id, audio_rec, bucket_name, blob_name, hr, conf)
+    max_conf, max_hr = maxes
 
-    if results > 0:
+    if results > 1:
         # Create a signed URL
         download_url = generate_signed_url(bucket_name, blob_name)
 
@@ -242,7 +256,7 @@ def process_audio_endpoint():
         email_body += f"Download the audio file here: {download_url}"
         send_email("Snowmobile Detection Alert", email_body)
 
-    return jsonify({"message": "Audio processing completed!"})
+    return jsonify({"message": f"file {blob_name} processed. Max CONF = {max_conf}, MAX HR = {max_hr}"})
 
 
 if __name__ == "__main__":
