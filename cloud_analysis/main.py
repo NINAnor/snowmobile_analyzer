@@ -57,8 +57,10 @@ def send_email(subject, body):
         server.send_message(msg)
         server.quit()
         logging.info("Email sent successfully!")
+        return "Succes"
     except Exception as e:
         logging.error(f"Error sending email: {e}")
+        return repr(e)
 
 
 from pydub import AudioSegment
@@ -243,6 +245,7 @@ def process_audio_endpoint():
     results, maxes = on_process_audio(audio_id, audio_rec, bucket_name, blob_name, hr, conf)
     max_conf, max_hr = maxes
 
+    email_response = "Not sent"
     if results > 1:
         # Create a signed URL
         download_url = generate_signed_url(bucket_name, blob_name)
@@ -254,9 +257,9 @@ def process_audio_endpoint():
         email_body = f"{results} snowmobile detections were made in the audio file!\n"
         email_body += f"Detections come from: {location}\n"
         email_body += f"Download the audio file here: {download_url}"
-        send_email("Snowmobile Detection Alert", email_body)
+        email_response = send_email("Snowmobile Detection Alert", email_body)
 
-    return jsonify({"message": f"file {blob_name} processed. Max CONF = {max_conf}, MAX HR = {max_hr}"})
+    return jsonify({"message": f"file {blob_name} processed. Max CONF = {max_conf}, MAX HR = {max_hr}, DET COUNT = {results}, E-MAIL = {email_response}"})
 
 
 if __name__ == "__main__":
