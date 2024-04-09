@@ -2,7 +2,7 @@
 
 curl -X POST \
      -H "Content-Type: application/json" \
-     -d '{"hr": 0.00, "conf": 0.0001, "audio_id": "test-id", "audio_rec": {"location": {"latitude": 0, "longitude": 0}}, "bucket_name": "snoskuter-detector-test", "blob_name": "other.mp3"}' \
+     -d '{"hr": 0.00, "conf": 0.0001, "audio_id": "test-id", "audio_rec": {"location": {"latitude": 0, "longitude": 0}}, "bucket_name": "snoskuter-detector-test", "blob_name": "proj_miljodir/bugg_RPiID-10000000f8e69c84/conf_6f40914/2024-04-08T11_54_33.575Z.mp3"}' \
      http://localhost:8080/process-audio
 
 

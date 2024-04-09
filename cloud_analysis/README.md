@@ -52,7 +52,7 @@ docker build -t snowmobile_cloud -f cloud_Dockerfile .
 
 It is possible to test the image by sending a file to the endpoint:
 
-```
+```bash
 docker run --rm -p 8080:8080 -v $PWD:/app snowmobile_cloud
 ```
 
@@ -84,7 +84,7 @@ gcloud auth login
 3- Log in to the project
 
 ```bash
-gcloud config set project snokuter-akustikk
+gcloud config set project snoskuter-akustikk
 ```
 
 ## Docker stuff
