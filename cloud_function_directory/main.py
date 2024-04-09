@@ -57,7 +57,7 @@ def trigger_audio_analysis(data, context):
     file_name = data['name']
     bucket_name = data['bucket']
     harmonic_ratio = 0.1
-    confidence = 0.95
+    confidence = 0.99
     
     # URL of your Cloud Run service
     cloud_run_url = "https://model-4uhtnq5xla-lz.a.run.app/process-audio"
@@ -68,7 +68,7 @@ def trigger_audio_analysis(data, context):
         "blob_name": file_name,
         "audio_id": "example-audio-id",
         "audio_rec": {"location": {"latitude": 0, "longitude": 0}},
-        "hr": harmonic_ratio,
+        "hr": harmonic_ratio, # COULD IT BE THAT THIS IS INTERPRETED AS A STRING???
         "conf": confidence
     }
     

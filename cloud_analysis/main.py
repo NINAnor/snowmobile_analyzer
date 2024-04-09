@@ -176,9 +176,8 @@ def analyseAudioFile(
         idx_end = idx_begin + 3
         conf = np.array(item_audioclip)
         label = np.argmax(conf, axis=0)
-        confidence = conf.max()
+        confidence = conf[1] # conf.max()
         hr = np.array(item_hr)
-
         # Append the conf and hr of each segment
         conf_arr.append(confidence)
         hr_arr.append(hr)
@@ -192,7 +191,7 @@ def analyseAudioFile(
         idx_begin = idx_end
 
     # Get the max confidence and hr for the file analyzed
-    maxes = [max(conf_arr), max(hr_arr)]
+    maxes = [conf_arr, hr_arr]
 
     return results, maxes
 
