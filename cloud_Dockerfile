@@ -1,6 +1,13 @@
-FROM python:3.8-bullseye
+FROM python:3.8-bookworm as base
 
-ARG PACKAGES="ffmpeg build-essential unzip gcsfuse"
+FROM base as model
+# Clone the repository and download assets
+WORKDIR /app
+RUN wget https://zenodo.org/record/7969521/files/assets.zip?download=1
+RUN mkdir audioclip && unzip -d ./audioclip ./assets.zip?download=1 
+
+FROM base
+ARG PACKAGES="ffmpeg build-essential unzip gcsfuse python3-packaging"
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN \
@@ -10,27 +17,13 @@ RUN \
     apt-get install -qq $PACKAGES && \
     rm -rf /var/lib/apt/lists/*
 
-RUN pip3 install poetry 
+# RUN pip3 install poetry 
 
 WORKDIR /app
 
-# Clone the repository and download assets
-RUN mkdir audioclip
-RUN cd audioclip 
-RUN wget https://zenodo.org/record/7969521/files/assets.zip?download=1 
-RUN unzip ./assets.zip?download=1 
-RUN cd ../
-
-# Package install
+COPY requirements.txt .
+RUN pip3 install -r requirements.txt
 COPY . ./
-RUN poetry config virtualenvs.create false
-RUN poetry add distlib
-RUN poetry install --no-root
-RUN poetry add Flask
-RUN poetry add python-dotenv
-RUN poetry add google-cloud-storage
-RUN poetry add pydub
-
 
 ENV PYTHONPATH "${PYTHONPATH}:/app:/app/audioclip:/app:/app/src"
 ENTRYPOINT ["python", "/app/cloud_analysis/main.py"]
