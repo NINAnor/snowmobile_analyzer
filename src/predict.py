@@ -3,6 +3,7 @@ import datetime
 import os
 import numpy as np
 import csv
+import sys
 
 import torch
 from torch.utils.data import DataLoader
@@ -16,10 +17,10 @@ import logging
 # Open the config file
 import yaml
 from yaml import FullLoader
-with open("./CONFIG.yaml") as f:
+with open("../CONFIG.yaml") as f:
     cfg = yaml.load(f, Loader=FullLoader)
 
-logging.basicConfig(filename='logs/logfile.log', level=logging.INFO,
+logging.basicConfig(filename='../logs/logfile.log', level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
 def initModel(model_path, device):
@@ -158,71 +159,35 @@ def analyzeFile(
 
         write_results(pred_audioclip_array, pred_hr_array, outpath, min_hr, min_conf)
 
-        # Give the tim it took to analyze file
+        # Give the time it took to analyze file
         delta_time = (datetime.datetime.now() - start_time).total_seconds()
         message = "Finished {} in {:.2f} seconds".format(file_path, delta_time)
         print(message, flush=True)
         logging.info(message)
 
+def main(filename, cfg):
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model = initModel(model_path=cfg["path_snowmobile_model"], device=device)
+
+    analyzeFile(filename,
+                model, 
+                device, 
+                num_workers=cfg["NUM_WORKERS"],
+                min_hr=cfg["MIN_HR"],
+                min_conf=cfg["MIN_CONF"],
+                batch_size=cfg["BATCH_SIZE"])
+
 
 if __name__ == "__main__":
 
-    # Get the config for doing the predictions
-    # FOR TESTING THE PIPELINE WITH ONE FILE
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument(
-        "--input",
-        help="Path to the file to analyze",
-        required=True,
-        type=str,
-    )
-
-    parser.add_argument(
-        "--num_workers",
-        help="Number of workers for reading in audiofiles",
-        default=1,
-        required=False,
-        type=int,
-    )
-
-    parser.add_argument(
-        "--min_hr",
-        help="Minimum value for harmonic ratio to take detection in",
-        default=0.1,
-        required=False,
-        type=int,
-    )
-
-    parser.add_argument(
-        "--min_conf",
-        help="Minimum value for model confidence to take detection in",
-        default=0.99,
-        required=False,
-        type=int,
-    )
-    
-    cli_args = parser.parse_args()
-
-    # Initiate model
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model_path = cfg["path_snowmobile_model"]
-
-    model = initModel(model_path=model_path, device=device)
+    filename = sys.argv[1]
 
     # Analyze file
-    print("Analysing {}".format(cli_args.input))
+    print("Analysing {}".format(filename))
     try:
-        analyzeFile(
-            cli_args.input,
-            model,
-            device=device,
-            batch_size=1,
-            num_workers=cli_args.num_workers,
-            min_hr=cli_args.min_hr,
-            min_conf=cli_args.min_conf
-        )
+        main(filename, cfg)
     except Exception as e:
-        print(f"File {cli_args.input} failed to be analyzed")
-        logging.error(f"File {cli_args.input} failed to be analyzed: {str(e)}")
+        print(f"File {filename} failed to be analyzed")
+        logging.error(f"File {filename} failed to be analyzed: {str(e)}")
         logging.error(traceback.format_exc())
