@@ -19,7 +19,7 @@ Moreoever, in this repository we provide guidance on setting up a pipeline for r
 
 Below are the intructions on installing and using the snowmobile detector with both Docker and without. The output of the script is a subfolder `SNOWMOBILE_RESULTS` containing the `.csv` file of the analyzed file. Note that the folder `SNOWMOBILE_RESULTS` will be located in the same folder as the input file.
 
-### Use with Docker (recommanded)
+### Use with Docker 
 
 Create the Docker image image:
 
@@ -51,10 +51,8 @@ Note that you can change `./example/example_audio.mp3` to the path of your own f
 
 ### Use without Docker
 
-Install `poetry` (the package manager we use) if it is not already installed.
-
 ```bash
-pip install poetry
+pip install -r requirements.txt
 ```
 
 Copy the github repository and get the model from [Zenodo](https://zenodo.org/record/7969521).
