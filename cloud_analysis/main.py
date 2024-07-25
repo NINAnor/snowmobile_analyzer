@@ -15,14 +15,14 @@ from email.message import EmailMessage
 import torch
 from torch.utils.data import DataLoader
 
-from predict import predict
-from predict import initModel
 from utils.utils import AudioList
+from utils.audio_signal import AudioSignal
 
 from google.cloud import storage
 from google.oauth2 import service_account
 import datetime
 
+from pydub import AudioSegment
 import io
 
 import logging
@@ -63,16 +63,13 @@ def send_email(subject, body):
         return repr(e)
 
 
-from pydub import AudioSegment
-import io
-
 def convert_mp3_to_wav(mp3_file_object):
     # Load MP3 file from file object
     audio = AudioSegment.from_file(mp3_file_object, format="mp3")
     
     # Convert to WAV
     wav_file_object = io.BytesIO()
-    audio.export(wav_file_object, format="wav")
+    audio.export(wav_file_object, format="mp3")
     wav_file_object.seek(0)  # Move file pointer to the start
     
     return wav_file_object
@@ -109,9 +106,9 @@ def fetch_audio_data(bucket_name, blob_name):
     audio_file_object.seek(0)  # Move file pointer to the start
 
     # Convert MP3 to WAV
-    wav_file_object = convert_mp3_to_wav(audio_file_object)
-    
-    return wav_file_object
+    #wav_file_object = convert_mp3_to_wav(audio_file_object)
+
+    return audio_file_object
 
 def generate_signed_url(bucket_name, blob_name, expiration_time=86400):
     """
@@ -146,6 +143,55 @@ def generate_signed_url(bucket_name, blob_name, expiration_time=86400):
     return url
 
 
+def initModel(model_path, device):
+    model = torch.load(model_path, map_location=torch.device(device))
+    model.eval()
+    return model
+
+
+def compute_hr(array):
+
+    signal = AudioSignal(samples=array, fs=44100)
+
+    signal.apply_butterworth_filter(order=18, Wn=np.asarray([1, 600]) / (signal.fs / 2))
+    signal_hr = signal.harmonic_ratio(
+        win_length=int(1 * signal.fs),
+        hop_length=int(0.1 * signal.fs),
+        window="hamming",
+    )
+    hr = np.mean(signal_hr)
+
+    return hr
+
+def predict(testLoader, model, device):
+
+    proba_list = []
+    hr_list = []
+
+    for array in testLoader:
+
+        # Compute confidence for the DL model
+        if device == "cpu":
+            tensor = torch.tensor(array)
+        else:
+            tensor = array
+
+        tensor = tensor.to(device)
+        output = model(tensor)
+        output = np.exp(output.cpu().detach().numpy())
+        proba_list.append(output[0])
+
+        # Compute HR if label=snowmobile
+        label = np.argmax(output[0], axis=0)
+
+        if label == 1:
+            hr = compute_hr(np.array(array))
+            hr_list.append(hr)
+        else:
+            hr_list.append(0)
+
+    return proba_list, hr_list
+
 def analyseAudioFile(
         audio_file_object, min_hr, min_conf, batch_size=1, num_workers=2,
 ):
@@ -176,14 +222,15 @@ def analyseAudioFile(
         idx_end = idx_begin + 3
         conf = np.array(item_audioclip)
         label = np.argmax(conf, axis=0)
-        confidence = conf[1] # conf.max()
+        confidence = conf.max()
         hr = np.array(item_hr)
+
         # Append the conf and hr of each segment
-        conf_arr.append(confidence)
+        conf_arr.append(conf[1])
         hr_arr.append(hr)
 
         # If the label is not "soundscape" then write the row:
-        if label != 0 and hr > min_hr and confidence > min_conf:
+        if hr > min_hr and confidence > min_conf:
             item_properties = [idx_begin, idx_end, confidence, hr]
             results.append(item_properties)
 
@@ -208,14 +255,11 @@ def on_process_audio(audio_id: str, audio_rec: dict, bucket_name: str, blob_name
 
     # After processing we record each detection in the database. 
     # Each detection should have a start and end time which is used to create an audio clip later. 
-    count = 0
+    count = len(results)
     detections = []
 
     for r in results: 
         start, end, confidence, harmonic_ratio = r
-
-        if harmonic_ratio > hr and confidence > conf:
-            count += 1
 
         # create the detections dataset
         detections.append({
@@ -245,7 +289,7 @@ def process_audio_endpoint():
     max_conf, max_hr = maxes
 
     email_response = "Not sent"
-    if results > 1:
+    if results > 0:
         # Create a signed URL
         download_url = generate_signed_url(bucket_name, blob_name)
 
@@ -258,10 +302,9 @@ def process_audio_endpoint():
         email_body += f"Download the audio file here: {download_url}"
         email_response = send_email("Snowmobile Detection Alert", email_body)
 
-    return jsonify({"message": f"file {blob_name} processed. Max CONF = {max_conf}, MAX HR = {max_hr}, DET COUNT = {results}, E-MAIL = {email_response}"})
+    return jsonify({"message": f"file {blob_name} processed. CONF SNOWMOBILE = {max_conf}, HR = {max_hr}, DET COUNT = {results}, E-MAIL = {email_response}"})
 
 
 if __name__ == "__main__":
     app.debug = True
     app.run(host='0.0.0.0', port=8080)
-
