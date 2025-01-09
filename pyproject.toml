@@ -17,7 +17,7 @@ visdom = "^0.1.8"
 ftfy = "^6.1.1"
 regex = "^2022.4.24"
 torchsummary = "^1.5.1"
-ray = {extras = ["tune"], version = "^1.12.0"}
+ray = {extras = ["tune"], version = "^2.8.1"}
 mlflow = "^1.25.1"
 pydub = "^0.25.1"
 bayesian-optimization = "^1.2.0"
