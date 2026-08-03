@@ -240,7 +240,7 @@ class AudioSignal:
             if nonzero_differences.size == 0:
                 low_edge[i] = high_edge
             else:
-                low_edge[i] = nonzero_differences[0]
+                low_edge[i] = nonzero_differences[0][0]
 
         # Normalize the autocorrelation.
         gamma = np.divide(
