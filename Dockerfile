@@ -33,6 +33,6 @@ COPY --from=assets /assets ./audioclip
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen
 
-ENV PYTHONPATH /app:/app/src:/app/audioclip
+ENV PYTHONPATH=/app:/app/src:/app/audioclip
 
 ENTRYPOINT ["uv", "run", "python", "src/predict.py"]
