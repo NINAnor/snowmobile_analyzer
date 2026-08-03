@@ -5,7 +5,8 @@ dev = [
 
 [project]
 authors = [
-  {name = "Benjamin Cretois", email = "benjamin.cretois@nina.no"}
+  {name = "Benjamin Cretois", email = "benjamin.cretois@nina.no"},
+  {name = "Francesco Frassinelli", email = "francesco.frassinelli@nina.no"}
 ]
 # PEP 621 project metadata
 # See https://www.python.org/dev/peps/pep-0621/
