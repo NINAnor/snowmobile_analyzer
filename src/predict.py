@@ -157,8 +157,8 @@ def main(filename, cfg):
         filename,
         model,
         device,
-        num_workers=cfg["NUM_WORKERS"],
-        batch_size=cfg["BATCH_SIZE"],
+        num_workers=cfg.get("NUM_WORKERS", 0),
+        batch_size=cfg.get("BATCH_SIZE", 1),
     )
 
 
