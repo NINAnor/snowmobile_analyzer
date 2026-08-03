@@ -27,7 +27,9 @@ logging.basicConfig(
 
 
 def initModel(model_path, device):
-    model = torch.load(model_path, map_location=torch.device(device))
+    model = torch.load(
+        model_path, map_location=torch.device(device), weights_only=False
+    )
     model.eval()
     return model
 
