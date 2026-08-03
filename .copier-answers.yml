@@ -1,0 +1,15 @@
+# Changes here will be overwritten by Copier
+_commit: v0.3.0
+_src_path: gh:ninanor/template-python
+author_name: Benjamin Cretois
+debug: false
+default_branch_name: main
+docker: true
+email: benjamin.cretois@nina.no
+notebook: false
+project_name: Snowmobile analyzer
+project_slug: snowmobile_analyzer
+repo_name: snowmobile_analyzer
+repo_org: NINAnor
+template_type: python
+type_annotations: false
