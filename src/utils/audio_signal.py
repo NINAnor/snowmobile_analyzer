@@ -1,7 +1,6 @@
-import typing
+import math
 import os
 from warnings import warn
-import math
 
 import numpy as np
 from librosa import load as librosa_load
@@ -15,7 +14,7 @@ class AudioSignal:
         self,
         samples: np.ndarray,
         fs: int,
-        file_path: typing.Union[str, os.PathLike] = None,
+        file_path: str | os.PathLike = None,
         verbose: bool = True,
     ):
         """Create an audiosignal instance.
@@ -42,6 +41,7 @@ class AudioSignal:
                 warn(
                     "Clipping detected in input. You may want to rescale.",
                     RuntimeWarning,
+                    stacklevel=2,
                 )
 
         self.file_path = file_path
@@ -116,7 +116,7 @@ class AudioSignal:
         return self.n_channels == 1
 
     @property
-    def file_name(self) -> typing.Union[str, os.PathLike]:
+    def file_name(self) -> str | os.PathLike:
         """File name of audio signal (optional)."""
         return self.get_file_name_from_path(self.file_path)
 
@@ -128,7 +128,7 @@ class AudioSignal:
     @classmethod
     def load_from_audiofile(
         cls,
-        file_path_in: typing.Union[str, bytes, os.PathLike],
+        file_path_in: str | bytes | os.PathLike,
         offset=0.0,
         duration=None,
         mono=False,
@@ -158,7 +158,7 @@ class AudioSignal:
 
     @staticmethod
     def get_file_name_from_path(
-        file_path_in: typing.Union[str, os.PathLike, None], remove_ext=False
+        file_path_in: str | os.PathLike | None, remove_ext=False
     ):
         """Obtain file name from full path to file."""
         try:
@@ -175,7 +175,7 @@ class AudioSignal:
     def apply_butterworth_filter(
         self,
         order: int,
-        Wn: typing.Union[list, np.ndarray],
+        Wn: list | np.ndarray,
         filter_type: str = None,
         analog: bool = False,
     ):

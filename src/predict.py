@@ -1,35 +1,38 @@
-import argparse
-import datetime
-import os
-import numpy as np
 import csv
-import sys
-
-import torch
-from torch.utils.data import DataLoader
-
-from utils.utils import AudioList
-from utils.audio_signal import AudioSignal
-
-import traceback
+import datetime
 import logging
+import os
+import sys
+import traceback
+
+import numpy as np
+import torch
 
 # Open the config file
 import yaml
+from torch.utils.data import DataLoader
 from yaml import FullLoader
+
+from utils.audio_signal import AudioSignal
+from utils.utils import AudioList
+
 with open("./CONFIG.yaml") as f:
     cfg = yaml.load(f, Loader=FullLoader)
 
-logging.basicConfig(filename='./logs/logfile.log', level=logging.INFO,
-                    format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    filename="./logs/logfile.log",
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+)
+
 
 def initModel(model_path, device):
     model = torch.load(model_path, map_location=torch.device(device))
     model.eval()
     return model
 
-def compute_hr(array):
 
+def compute_hr(array):
     signal = AudioSignal(samples=array, fs=44100)
 
     signal.apply_butterworth_filter(order=18, Wn=np.asarray([1, 600]) / (signal.fs / 2))
@@ -42,13 +45,12 @@ def compute_hr(array):
 
     return hr
 
-def predict(testLoader, model, device):
 
+def predict(testLoader, model, device):
     proba_list = []
     hr_list = []
 
     for array in testLoader:
-
         # Compute confidence for the DL model
         if device == "cpu":
             tensor = torch.tensor(array)
@@ -71,14 +73,13 @@ def predict(testLoader, model, device):
 
     return proba_list, hr_list
 
-def write_results(prob_audioclip_array, hr_array, outname):
 
+def write_results(prob_audioclip_array, hr_array, outname):
     # Store the array result in a CSV friendly format
     rows_for_csv = []
     idx_begin = 0
 
-    for item_audioclip, item_hr in zip(prob_audioclip_array, hr_array):
-
+    for item_audioclip, item_hr in zip(prob_audioclip_array, hr_array, strict=False):
         # Get the properties of the detection (start, end, label and confidence)
         idx_end = idx_begin + 3
         conf = np.array(item_audioclip)
@@ -96,9 +97,14 @@ def write_results(prob_audioclip_array, hr_array, outname):
         # Write only if there are some detections respecting our conditions
         if len(rows_for_csv) > 0:
             with open(outname, "w") as file:
-
                 writer = csv.writer(file)
-                header = ["start_detection", "end_detection", "label", "confidence", "hr"]
+                header = [
+                    "start_detection",
+                    "end_detection",
+                    "label",
+                    "confidence",
+                    "hr",
+                ]
 
                 writer.writerow(header)
                 writer.writerows(rows_for_csv)
@@ -109,9 +115,7 @@ def write_results(prob_audioclip_array, hr_array, outname):
             logging.info(message)
 
 
-def analyzeFile(
-    file_path, model, device, num_workers, batch_size=1
-):
+def analyzeFile(file_path, model, device, num_workers, batch_size=1):
     # Start time
     start_time = datetime.datetime.now()
 
@@ -138,28 +142,29 @@ def analyzeFile(
 
     # Give the time it took to analyze file
     delta_time = (datetime.datetime.now() - start_time).total_seconds()
-    message = "Finished {} in {:.2f} seconds".format(file_path, delta_time)
+    message = f"Finished {file_path} in {delta_time:.2f} seconds"
     print(message, flush=True)
     logging.info(message)
 
-def main(filename, cfg):
 
+def main(filename, cfg):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = initModel(model_path=cfg["path_snowmobile_model"], device=device)
 
-    analyzeFile(filename,
-                model, 
-                device, 
-                num_workers=cfg["NUM_WORKERS"],
-                batch_size=cfg["BATCH_SIZE"])
+    analyzeFile(
+        filename,
+        model,
+        device,
+        num_workers=cfg["NUM_WORKERS"],
+        batch_size=cfg["BATCH_SIZE"],
+    )
 
 
 if __name__ == "__main__":
-
     filename = sys.argv[1]
 
     # Analyze file
-    print("Analysing {}".format(filename))
+    print(f"Analysing {filename}")
     try:
         main(filename, cfg)
     except Exception as e:
