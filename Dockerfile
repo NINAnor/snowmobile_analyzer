@@ -1,33 +1,38 @@
-FROM python:3.8-bullseye
+FROM busybox:1.36 AS assets
+ADD --checksum=sha256:0a4c8f86f45cb1ba647f9a15a42a18a2ff178da31431fabb1d16271296138279 \
+    "https://zenodo.org/record/7969521/files/assets.zip?download=1" \
+    /assets/assets.zip
+RUN unzip -q -o /assets/assets.zip -d /assets \
+    && rm /assets/assets.zip
 
-ARG PACKAGES="ffmpeg build-essential unzip gcsfuse"
+# Use latest CUDA runtime image
+FROM nvidia/cuda:12.0.0-cudnn8-runtime-ubuntu22.04
 
-ARG DEBIAN_FRONTEND=noninteractive
-RUN \
-    echo "deb https://packages.cloud.google.com/apt gcsfuse-bullseye main" | tee /etc/apt/sources.list.d/gcsfuse.list && \
-    curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - && \
-    apt-get update && \
-    apt-get install -qq $PACKAGES && \
-    rm -rf /var/lib/apt/lists/*
+# Copy uv binary from official uv image
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
-RUN pip3 install poetry 
+ENV UV_LINK_MODE=copy
 
 WORKDIR /app
 
-# Clone the repository and download assets
-RUN mkdir audioclip
-RUN cd audioclip 
-RUN wget https://zenodo.org/record/7969521/files/assets.zip?download=1 
-RUN unzip ./assets.zip?download=1 
-RUN cd ../
+# System dependencies for audio decoding
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ffmpeg \
+    && rm -rf /var/lib/apt/lists/*
 
-# Package install
-COPY . ./
-RUN poetry config virtualenvs.create false
-RUN poetry install --no-root
+# Install project dependencies
+COPY pyproject.toml uv.lock ./
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --no-install-project
 
+# Copy application code and the model assets
+COPY . .
+COPY --from=assets /assets ./audioclip
 
+# Install the project
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen
 
-ENV PYTHONPATH "${PYTHONPATH}:/app:/app/audioclip:/app:/app/src"
-ENTRYPOINT [ "./entrypoint.sh" ]
+ENV PYTHONPATH /app:/app/src:/app/audioclip
 
+ENTRYPOINT ["uv", "run", "python", "src/predict.py"]

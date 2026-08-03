@@ -1,6 +1,18 @@
-# Ignore directory containing the R scripts used for the paper
-singing_in_noise/
-
-# Ignore git and cache folders
+_build/
+__pycache__/
+.vscode
 .git
-.cache
+prek.toml
+prek-extra.toml
+.venv
+.env
+
+# Project-specific
+audioclip/assets
+cloud_analysis/*.json
+example/
+logs/
+yellowstone_analysis/
+post_analysis/
+cloud_function_directory/
+singing_in_noise/

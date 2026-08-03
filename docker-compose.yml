@@ -1,0 +1,16 @@
+services:
+  app:
+    build:
+      context: .
+    environment:
+        DEBUG: True
+    develop:
+      watch:
+        # Sync the working directory with the `/app` directory in the container
+        - action: sync
+          path: .
+          target: /app
+          ignore:
+            - .venv/
+        - action: rebuild
+          path: ./pyproject.toml
