@@ -13,6 +13,6 @@ exec docker run \
     -v ./logs:/app/logs \
     -v "$FOLDER_TO_EXPOSE":/data \
     snowmobile \
-    --input /data/"$FILENAME"
+    /data/"$FILENAME"
 
 

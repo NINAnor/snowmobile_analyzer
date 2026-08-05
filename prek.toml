@@ -1,0 +1,75 @@
+# See https://prek.j178.dev for more information.
+# schema: https://www.schemastore.org/prek.json
+
+default_stages = ["pre-commit"]
+exclude = '''(?x)
+  ^(audioclip/|cloud_analysis/|cloud_function_directory/|example/|logs/|post_analysis/|yellowstone_analysis/)|
+  ^(CONFIG\.yaml|analyze\.sh|LICENCE|cloud_Dockerfile|\.gcloudignore)$|
+  \.mp3$
+'''
+
+[[repos]]
+hooks = [
+  {id = "trailing-whitespace"},
+  {id = "end-of-file-fixer"},
+  {id = "check-json"},
+  {id = "check-toml"},
+  {id = "check-xml"},
+  {id = "check-yaml"},
+  {id = "debug-statements"},
+  {id = "check-builtin-literals"},
+  {id = "check-case-conflict"},
+  {id = "check-docstring-first"},
+  {id = "detect-private-key"},
+  {id = "check-merge-conflict", args = ["--assume-in-merge"]}
+]
+repo = "https://github.com/pre-commit/pre-commit-hooks"
+rev = "v6.0.0"
+
+[[repos]]
+hooks = [
+  {id = "pretty-format-toml", args = ["--autofix"], exclude = '^uv\.lock$'}
+]
+repo = "https://github.com/macisamuele/language-formatters-pre-commit-hooks"
+rev = "v2.16.0"
+
+[[repos]]
+hooks = [
+  {id = "detect-secrets", args = ["--exclude-files=django/src/fixtures/users.json"]}
+]
+repo = "https://github.com/Yelp/detect-secrets"
+rev = "v1.5.0"
+
+[[repos]]
+hooks = [
+  {id = "forbidden-files", name = "forbidden files", entry = "found Copier update rejection files", description = "review and remove .rej files before merging.", language = "fail", files = '\.rej$'}
+]
+repo = "local"
+
+[[repos]]
+hooks = [
+  {id = "zizmor"}
+]
+repo = "https://github.com/woodruffw/zizmor-pre-commit"
+rev = "v1.24.1"
+
+[[repos]]
+hooks = [
+  {id = "ruff"},
+  {id = "ruff-format"}
+]
+repo = "https://github.com/astral-sh/ruff-pre-commit"
+rev = "v0.15.10"
+
+[[repos]]
+hooks = [
+  {id = "uv-lock"}
+]
+repo = "https://github.com/astral-sh/uv-pre-commit"
+rev = "0.11.6"
+
+[[repos]]
+hooks = [
+  {id = "deptry", name = "deptry", entry = "uv run deptry .", language = "system", types = ["python"], pass_filenames = false}
+]
+repo = "local"

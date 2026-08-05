@@ -53,14 +53,17 @@ docker build -t snowmobile_cloud -f cloud_Dockerfile .
 It is possible to test the image by sending a file to the endpoint:
 
 ```bash
-docker run --rm -p 8080:8080 -v $PWD:/app snowmobile_cloud
+docker run --rm -p 8080:8080 \
+    -v "$PWD/cloud_analysis/gmail_logs.env":/app/cloud_analysis/gmail_logs.env:ro \
+    -v "$PWD/cloud_analysis/key-file.json":/app/cloud_analysis/key-file.json:ro \
+    snowmobile_cloud
 ```
 
 And in another terminal:
 
 ```bash
 cd cloud_analysis
-./test.sh
+./test_local.sh
 ```
 
 The sender should receive an email.

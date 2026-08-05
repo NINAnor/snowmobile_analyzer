@@ -1,37 +1,74 @@
-[tool.poetry]
-name = "app"
+[dependency-groups]
+dev = [
+  "deptry"
+]
+
+[project]
+authors = [
+  {name = "Benjamin Cretois", email = "benjamin.cretois@nina.no"},
+  {name = "Francesco Frassinelli", email = "francesco.frassinelli@nina.no"}
+]
+# PEP 621 project metadata
+# See https://www.python.org/dev/peps/pep-0621/
+dependencies = [
+  "Flask",
+  "ftfy>=6.1",
+  "google-auth",
+  "google-cloud-storage",
+  "librosa>=0.9",
+  "numpy",
+  "pillow",
+  "pydub>=0.25",
+  "python-dotenv",
+  "pytorch-ignite>=0.4",
+  "pytorch-lightning>=1.6",
+  "pyyaml",
+  "regex>=2022.4",
+  "requests",
+  "scipy",
+  "termcolor>=1.1",
+  "torch",
+  "torchvision",
+  "tqdm"
+]
+description = "A model to detect whether snowmobiles are present in an acoustic dataset."
+license = {text = "MIT"}
+name = "snowmobile_analyzer"
+readme = "README.md"
+requires-python = ">=3.10"
 version = "0.1.0"
-description = ""
-authors = ["Benjamin"]
 
-[tool.poetry.dependencies]
-python = "^3.8"
-pandas = "^1.4.2"
-scikit-learn = "^1.0.2"
-librosa = "^0.9.1"
-SoundFile = "^0.10.3"
-matplotlib = "^3.5.2"
-termcolor = "^1.1.0"
-pytorch-ignite = "^0.4.8"
-visdom = "^0.1.8"
-ftfy = "^6.1.1"
-regex = "^2022.4.24"
-torchsummary = "^1.5.1"
-ray = {extras = ["tune"], version = "^1.12.0"}
-mlflow = "^1.25.1"
-pydub = "^0.25.1"
-bayesian-optimization = "^1.2.0"
-pytorch-lightning = "1.6.3"
-audiomentations = "^0.25.1"
-torch = {url = "https://download.pytorch.org/whl/cu113/torch-1.11.0%2Bcu113-cp38-cp38-linux_x86_64.whl"}
-torchvision = {url = "https://download.pytorch.org/whl/cu113/torchvision-0.12.0%2Bcu113-cp38-cp38-linux_x86_64.whl"}
-torchaudio = {url = "https://download.pytorch.org/whl/cu113/torchaudio-0.11.0%2Bcu113-cp38-cp38-linux_x86_64.whl"}
-"fs.sshfs" = "^1.0.1"
-fs = "^2.4.16"
-seaborn = "^0.12.2"
+[tool.deptry]
+# The vendored audioclip/ code and legacy analysis folders are kept as-is and
+# are not scanned; their dependencies are intentionally declared.
+extend_exclude = [
+  "audioclip",
+  "cloud_analysis",
+  "cloud_function_directory",
+  "example",
+  "logs",
+  "post_analysis",
+  "yellowstone_analysis"
+]
+ignore = ["DEP002"]
+known_first_party = ["utils"]
 
-[tool.poetry.dev-dependencies]
+[tool.ruff]
+extend-exclude = [
+  "audioclip",
+  "cloud_analysis",
+  "cloud_function_directory",
+  "example",
+  "logs",
+  "post_analysis",
+  "yellowstone_analysis"
+]
+fix = true
 
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+[tool.ruff.lint]
+ignore = ["COM812"]
+select = ["E", "W", "I", "F", "UP", "S", "B", "A", "COM", "LOG", "PTH", "Q"]
+
+[tool.ruff.lint.per-file-ignores]
+# Legacy prediction modules: relaxed on style conventions.
+"src/**" = ["E501", "LOG015", "PTH", "S101", "S506"]
